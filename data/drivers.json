@@ -1,0 +1,34 @@
+[
+  { "id": "GAS", "name": "Pierre Gasly", "teamId": "ALP", "price": 6.5, "active": true },
+  { "id": "COL", "name": "Franco Colapinto", "teamId": "ALP", "price": 4.5, "active": true },
+
+  { "id": "ALO", "name": "Fernando Alonso", "teamId": "AMR", "price": 4.7, "active": true },
+  { "id": "STR", "name": "Lance Stroll", "teamId": "AMR", "price": 6.7, "active": true },
+
+  { "id": "BOR", "name": "Gabriel Bortoleto", "teamId": "AUD", "price": 5.5, "active": true },
+  { "id": "HUL", "name": "Nico Hulkenberg", "teamId": "AUD", "price": 5.0, "active": true },
+
+  { "id": "PER", "name": "Sergio Perez", "teamId": "CAD", "price": 7.0, "active": true },
+  { "id": "BOT", "name": "Valtteri Bottas", "teamId": "CAD", "price": 6.5, "active": true },
+
+  { "id": "LEC", "name": "Charles Leclerc", "teamId": "FER", "price": 23.0, "active": true },
+  { "id": "HAM", "name": "Lewis Hamilton", "teamId": "FER", "price": 21.9, "active": true },
+
+  { "id": "OCO", "name": "Esteban Ocon", "teamId": "HAA", "price": 7.9, "active": true },
+  { "id": "BEA", "name": "Oliver Bearman", "teamId": "HAA", "price": 9.3, "active": true },
+
+  { "id": "NOR", "name": "Lando Norris", "teamId": "MCL", "price": 30.3, "active": true },
+  { "id": "PIA", "name": "Oscar Piastri", "teamId": "MCL", "price": 25.1, "active": true },
+
+  { "id": "ANT", "name": "Kimi Antonelli", "teamId": "MER", "price": 18.1, "active": true },
+  { "id": "RUS", "name": "George Russell", "teamId": "MER", "price": 23.7, "active": true },
+
+  { "id": "LAW", "name": "Liam Lawson", "teamId": "RB", "price": 5.9, "active": true },
+  { "id": "LIN", "name": "Arvid Lindblad", "teamId": "RB", "price": 4.8, "active": true },
+
+  { "id": "HAD", "name": "Isack Hadjar", "teamId": "RBR", "price": 6.9, "active": true },
+  { "id": "VER", "name": "Max Verstappen", "teamId": "RBR", "price": 30.1, "active": true },
+
+  { "id": "ALB", "name": "Alexander Albon", "teamId": "WIL", "price": 12.6, "active": true },
+  { "id": "SAI", "name": "Carlos Sainz Jr.", "teamId": "WIL", "price": 7.7, "active": true }
+]

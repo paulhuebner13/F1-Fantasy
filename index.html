@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>F1 Fantasy Tool</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="title">F1 Fantasy Tool</div>
+      <div class="hint">No scroll. Fixed dashboard layout.</div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: Inputs + current team selection -->
+      <section class="card left">
+        <h2>Current Team</h2>
+
+        <div class="form">
+          <div class="field">
+            <label for="budgetInput">Budget cap</label>
+            <input id="budgetInput" type="number" value="100" step="0.1" />
+          </div>
+
+          <div class="field">
+            <label for="freeChangesInput">Free changes this week</label>
+            <input id="freeChangesInput" type="number" value="2" step="1" min="0" />
+          </div>
+
+        </div>
+
+        <div class="split">
+          <div>
+            <h3>Drivers</h3>
+            <div id="driversPicker" class="picker pickerDrivers"></div>
+            <div class="small">Pick exactly 5 active drivers.</div>
+          </div>
+
+          <div>
+            <h3>Constructors</h3>
+            <div id="constructorsPicker" class="picker pickerConstructors"></div>
+            <div class="small">Pick exactly 2 constructors.</div>
+          </div>
+        </div>
+
+        <div class="teamSplit">
+          <div>
+            <div id="selectedDriversGrid" class="teamGrid teamGridDrivers"></div>
+          </div>
+          <div>
+            <div id="selectedConstructorsGrid" class="teamGrid teamGridConstructors"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="card rightSuggest">
+        <button id="btnSuggest" class="primary">Suggest best team</button>
+      </section>
+
+
+      <!-- RIGHT TOP: Changes -->
+      <section class="card rightTop">
+        
+        <h2>Changes</h2>
+        <div id="changesHeader" class="summary">No suggestion yet.</div>
+        <div id="changesList" class="changesList"></div>
+      </section>
+
+      <!-- RIGHT BOTTOM: New team -->
+      <section class="card rightBottom">
+        <h2>New Team</h2>
+        <div class="teamSplit">
+          <div>
+            <div id="bestDriversGrid" class="teamGrid teamGridDrivers"></div>
+          </div>
+          <div>
+            <div id="bestConstructorsGrid" class="teamGrid teamGridConstructors"></div>
+          </div>
+        </div>
+        <div id="bestTeamTotals" class="summary"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

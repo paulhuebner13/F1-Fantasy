@@ -1,0 +1,13 @@
+[
+  { "id": "ALP", "name": "Alpine", "price": 10.1, "active": true, "color": "#0090FF" },
+  { "id": "AMR", "name": "Aston Martin", "price": 10.3, "active": true, "color": "#00A37A" },
+  { "id": "AUD", "name": "Audi", "price": 8.7, "active": true, "color": "#B0B0B0" },
+  { "id": "CAD", "name": "Cadillac", "price": 16.2, "active": true, "color": "#D8B200" },
+  { "id": "FER", "name": "Ferrari", "price": 31.8, "active": true, "color": "#E10600" },
+  { "id": "HAA", "name": "Haas", "price": 15.6, "active": true, "color": "#D9D9D9" },
+  { "id": "MCL", "name": "McLaren", "price": 36.1, "active": true, "color": "#FF7A00" },
+  { "id": "MER", "name": "Mercedes", "price": 28.4, "active": true, "color": "#00D2BE" },
+  { "id": "RBR", "name": "Red Bull Racing", "price": 31.1, "active": true, "color": "#1E41FF" },
+  { "id": "RB",  "name": "Racing Bulls", "price": 16.2, "active": true, "color": "#4A90E2" },
+  { "id": "WIL", "name": "Williams", "price": 19.5, "active": true, "color": "#005AFF" }
+]
