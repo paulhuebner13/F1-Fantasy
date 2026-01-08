@@ -3,9 +3,7 @@ import { calculateFantasyTeam } from "./optimizer.js";
 import { computeTransfers } from "./transfers.js";
 import {
   renderPickers,
-  renderSelectedTeam,
-  renderChanges,
-  renderNewTeam,
+  renderComparison,
   readInputs
 } from "./ui.js";
 
@@ -26,11 +24,7 @@ async function main() {
   data = await loadAllData();
 
   const rerenderLeft = () => {
-    renderPickers(data, state, () => {
-      renderSelectedTeam(data, state);
-      renderPickers(data, state, rerenderLeft);
-    });
-    renderSelectedTeam(data, state);
+    renderPickers(data, state, rerenderLeft);
   };
 
   rerenderLeft();
@@ -48,12 +42,14 @@ async function main() {
     ];
 
     const best = calculateFantasyTeam(budget, lastTeamIds, data, freeChanges);
-    renderNewTeam(data, best);
 
-    if (!best) return;
+    if (!best) {
+      renderComparison(data, state.currentTeam, null, null, freeChanges, 0, 0);
+      return;
+    }
 
     const transfers = computeTransfers(state.currentTeam, best);
-    renderChanges(
+    renderComparison(
       data,
       state.currentTeam,
       best,

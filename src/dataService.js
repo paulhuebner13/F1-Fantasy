@@ -11,14 +11,19 @@ export async function loadAllData() {
     })
   ]);
 
-  // expectedPoints is optional: if missing or invalid, fall back to empty maps
-  let expectedPoints = { drivers: {}, constructors: {} };
+  // expected is optional: if missing or invalid, fall back to empty maps
+  // Format:
+  // {
+  //   "drivers": { "NOR": { "points": 38.0, "delta": 0.12 }, ... },
+  //   "constructors": { "MCL": { "points": 91.2, "delta": 0.05 }, ... }
+  // }
+  let expected = { drivers: {}, constructors: {} };
   try {
     const r = await fetch("data/expectedPoints.json");
-    if (r.ok) expectedPoints = await r.json();
+    if (r.ok) expected = await r.json();
   } catch (e) {
-    expectedPoints = { drivers: {}, constructors: {} };
+    expected = { drivers: {}, constructors: {} };
   }
 
-  return { drivers, constructors, expectedPoints };
+  return { drivers, constructors, expected };
 }

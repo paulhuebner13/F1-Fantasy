@@ -89,12 +89,11 @@ function makeTile({ id, title, color, selected, lines, size }) {
   div.appendChild(top);
 
   if (title) {
-  const meta = document.createElement("div");
-  meta.className = "meta";
-  meta.textContent = title;
-  div.appendChild(meta);
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = title;
+    div.appendChild(meta);
   }
-
 
   if (lines && lines.length > 0) {
     const meta2 = document.createElement("div");
@@ -130,17 +129,25 @@ function toggleConstructor(state, id) {
   arr.push(id);
 }
 
-// Reads inputs from the left panel
+// Reads inputs from the left panel (robust)
 export function readInputs() {
-  const budget = Number(document.getElementById("budgetInput").value);
-  const freeChanges = Number(document.getElementById("freeChangesInput").value);
-  return { budget, freeChanges };
+  const budgetRaw = document.getElementById("budgetInput")?.value ?? "0";
+  const freeRaw = document.getElementById("freeChangesInput")?.value ?? "0";
+
+  const budget = Number(budgetRaw);
+  const freeChanges = Number(freeRaw);
+
+  return {
+    budget: Number.isFinite(budget) ? budget : 0,
+    freeChanges: Number.isFinite(freeChanges) ? freeChanges : 0
+  };
 }
 
 // Renders selectable badges for drivers and constructors
 export function renderPickers(data, state, onChange) {
   const driversWrap = document.getElementById("driversPicker");
   const constructorsWrap = document.getElementById("constructorsPicker");
+  if (!driversWrap || !constructorsWrap) return;
 
   driversWrap.innerHTML = "";
   constructorsWrap.innerHTML = "";
@@ -202,10 +209,12 @@ export function renderPickers(data, state, onChange) {
   }
 }
 
-// Renders the currently selected team grid (left bottom)
+// Renders the currently selected team grid (left bottom) - optional, safe if missing DOM
 export function renderSelectedTeam(data, state) {
   const driversWrap = document.getElementById("selectedDriversGrid");
   const constructorsWrap = document.getElementById("selectedConstructorsGrid");
+  if (!driversWrap || !constructorsWrap) return;
+
   driversWrap.innerHTML = "";
   constructorsWrap.innerHTML = "";
 
@@ -245,19 +254,24 @@ export function renderSelectedTeam(data, state) {
   }
 }
 
-// Renders changes (right top)
+/* ======================================================================
+   Legacy views (keep safe if DOM nodes do not exist)
+   ====================================================================== */
+
 export function renderChanges(data, oldTeam, newTeam, transfers, freeChanges, penaltyPerExtraChange, additionalChanges) {
   const header = document.getElementById("changesHeader");
   const list = document.getElementById("changesList");
+  if (!list) return;
 
-  header.textContent =
-    `Transfers: ${transfers.outDrivers.length + transfers.outConstructors.length} | Free: ${freeChanges} | Additional: ${additionalChanges} | Penalty per extra: hidden`;
+  if (header) {
+    header.textContent =
+      `Transfers: ${transfers.outDrivers.length + transfers.outConstructors.length} | Free: ${freeChanges} | Additional: ${additionalChanges} | Penalty per extra: hidden`;
+  }
 
   list.innerHTML = "";
 
   const constructorsById = new Map(data.constructors.map(c => [c.id, c]));
   const driversById = new Map(data.drivers.map(d => [d.id, d]));
-
 
   const columns = document.createElement("div");
   columns.className = "changesColumns";
@@ -337,20 +351,21 @@ export function renderChanges(data, oldTeam, newTeam, transfers, freeChanges, pe
   list.appendChild(columns);
 }
 
-// Renders new team (right bottom)
 export function renderNewTeam(data, best) {
   const driversGrid = document.getElementById("bestDriversGrid");
   const constructorsGrid = document.getElementById("bestConstructorsGrid");
   const totals = document.getElementById("bestTeamTotals");
 
-  driversGrid.innerHTML = "";
-  constructorsGrid.innerHTML = "";
-  totals.textContent = "";
+  if (driversGrid) driversGrid.innerHTML = "";
+  if (constructorsGrid) constructorsGrid.innerHTML = "";
+  if (totals) totals.textContent = "";
 
   if (!best) {
-    totals.textContent = "No team found. Check budget.";
+    if (totals) totals.textContent = "No team found. Check budget.";
     return;
   }
+
+  if (!driversGrid || !constructorsGrid || !totals) return;
 
   const constructorsById = new Map(data.constructors.map(c => [c.id, c]));
   const driversById = new Map(data.drivers.map(d => [d.id, d]));
@@ -397,6 +412,249 @@ export function renderNewTeam(data, best) {
     );
   }
 
+  const wPoints = best.weights?.wPoints ?? 0;
+  const wDelta = best.weights?.wDelta ?? 0;
+
   totals.textContent =
-    `Cost $${best.cost.toFixed(1)} | xPts ${best.totalXPts.toFixed(1)} | xΔ$ ${sumDelta.toFixed(2)} | Penalised ${best.penalisedPoints.toFixed(1)}`;
+    `Cost $${best.cost.toFixed(1)} | xPts ${best.totalXPts.toFixed(1)} | xΔ$ ${sumDelta.toFixed(2)} | wPts ${wPoints.toFixed(2)} | wΔ ${wDelta.toFixed(2)} | Combined ${best.combinedScore.toFixed(1)} | Penalised ${best.penalisedScore.toFixed(1)}`;
+}
+
+/* ======================================================================
+   New merged right panel (comparison)
+   ====================================================================== */
+
+function getExpected(map, id) {
+  const v = map?.[id];
+  if (!v) return { points: 0, delta: 0 };
+  return {
+    points: Number(v.points ?? 0),
+    delta: Number(v.delta ?? 0)
+  };
+}
+
+function makeCompCard({ name, color, cost, pts, delta, selected }) {
+  const div = document.createElement("div");
+  div.className = "compCard" + (selected ? " selected" : "");
+  div.style.borderColor = color;
+
+  if (selected) {
+    div.style.background = color;
+    div.style.color = textColorForBackground(color);
+  }
+
+  const top = document.createElement("div");
+  top.className = "compName";
+  top.textContent = name ?? "";
+  div.appendChild(top);
+
+  const bottom = document.createElement("div");
+  bottom.className = "compBottom";
+
+  const a = document.createElement("div");
+  a.className = "stat";
+  a.innerHTML = `<strong>Cost</strong>$${Number(cost ?? 0).toFixed(1)}`;
+
+  const b = document.createElement("div");
+  b.className = "stat";
+  b.innerHTML = `<strong>Pts</strong>${Number(pts ?? 0).toFixed(1)}`;
+
+  const c = document.createElement("div");
+  c.className = "stat";
+  c.innerHTML = `<strong>Δ$</strong>${Number(delta ?? 0).toFixed(2)}`;
+
+  bottom.appendChild(a);
+  bottom.appendChild(b);
+  bottom.appendChild(c);
+
+  div.appendChild(bottom);
+  return div;
+}
+
+function makePlaceholder() {
+  const div = document.createElement("div");
+  div.className = "compPlaceholder";
+  return div;
+}
+
+// Empty middle slot (for unchanged rows)
+function makeMidEmpty() {
+  const div = document.createElement("div");
+  div.className = "midArrow";
+  div.textContent = "";
+  return div;
+}
+
+function addComparisonRow(target, leftEl, midEl, rightEl) {
+  const row = document.createElement("div");
+  row.className = "changeRow";
+
+  const mid = document.createElement("div");
+  mid.className = "midCell";
+  mid.appendChild(midEl);
+
+  row.appendChild(leftEl);
+  row.appendChild(mid);
+  row.appendChild(rightEl);
+
+  target.appendChild(row);
+}
+
+export function renderComparison(data, oldTeam, best, transfers, freeChanges, penaltyPerExtraChange, additionalChanges) {
+  const list = document.getElementById("changesList");
+  const totals = document.getElementById("bestTeamTotals");
+  if (!list || !totals) return;
+
+  list.innerHTML = "";
+  totals.textContent = "";
+
+  if (!best) {
+    totals.textContent = "No team found. Check budget.";
+    return;
+  }
+
+  const constructorsById = new Map(data.constructors.map(c => [c.id, c]));
+  const driversById = new Map(data.drivers.map(d => [d.id, d]));
+
+  const expD = data.expected?.drivers ?? {};
+  const expC = data.expected?.constructors ?? {};
+
+  const columns = document.createElement("div");
+  columns.className = "changesColumns";
+
+  const leftCol = document.createElement("div");
+  const rightCol = document.createElement("div");
+
+  const leftTitle = document.createElement("div");
+  leftTitle.className = "changesColTitle";
+  leftTitle.textContent = "Driver changes";
+
+  const rightTitle = document.createElement("div");
+  rightTitle.className = "changesColTitle";
+  rightTitle.textContent = "Team changes";
+
+  const leftList = document.createElement("div");
+  leftList.className = "changesColList";
+
+  const rightList = document.createElement("div");
+  rightList.className = "changesColList";
+
+  const newDriversSet = new Set(best.driverIds);
+  const newConstructorsSet = new Set(best.constructorIds);
+
+  // Drivers: show all old drivers, unchanged go to RIGHT slot
+  let inIdx = 0;
+  for (const oldId of oldTeam.driverIds) {
+    const oldD = driversById.get(oldId);
+    if (!oldD) continue;
+
+    if (newDriversSet.has(oldId)) {
+      const color = colorForDriver(oldD, constructorsById);
+      const xpts = best.driverXPts?.[oldId] ?? getExpected(expD, oldId).points;
+      const xdel = best.driverXDelta?.[oldId] ?? getExpected(expD, oldId).delta;
+
+      addComparisonRow(
+        leftList,
+        makePlaceholder(),
+        makeMidEmpty(),
+        makeCompCard({ name: oldD.name, color, cost: oldD.price, pts: xpts, delta: xdel, selected: true })
+      );
+    } else {
+      const newId = transfers?.inDrivers?.[inIdx++];
+      const newD = newId ? driversById.get(newId) : null;
+
+      const oldExp = getExpected(expD, oldId);
+      const leftTile = makeCompCard({
+        name: oldD.name,
+        color: colorForDriver(oldD, constructorsById),
+        cost: oldD.price,
+        pts: oldExp.points,
+        delta: oldExp.delta,
+        selected: false
+      });
+
+      const midArrow = document.createElement("div");
+      midArrow.className = "midArrow";
+      midArrow.textContent = "→";
+
+      const rightTile = newD
+        ? makeCompCard({
+            name: newD.name,
+            color: colorForDriver(newD, constructorsById),
+            cost: newD.price,
+            pts: best.driverXPts?.[newId] ?? getExpected(expD, newId).points,
+            delta: best.driverXDelta?.[newId] ?? getExpected(expD, newId).delta,
+            selected: true
+          })
+        : makePlaceholder();
+
+      addComparisonRow(leftList, leftTile, midArrow, rightTile);
+    }
+  }
+
+  // Constructors: show all old constructors, unchanged go to RIGHT slot
+  let inCIdx = 0;
+  for (const oldId of oldTeam.constructorIds) {
+    const oldC = constructorsById.get(oldId);
+    if (!oldC) continue;
+
+    if (newConstructorsSet.has(oldId)) {
+      const color = colorForConstructor(oldC);
+      const xpts = best.constructorXPts?.[oldId] ?? getExpected(expC, oldId).points;
+      const xdel = best.constructorXDelta?.[oldId] ?? getExpected(expC, oldId).delta;
+
+      addComparisonRow(
+        rightList,
+        makePlaceholder(),
+        makeMidEmpty(),
+        makeCompCard({ name: oldC.name, color, cost: oldC.price, pts: xpts, delta: xdel, selected: true })
+      );
+    } else {
+      const newId = transfers?.inConstructors?.[inCIdx++];
+      const newC = newId ? constructorsById.get(newId) : null;
+
+      const oldExp = getExpected(expC, oldId);
+      const leftTile = makeCompCard({
+        name: oldC.name,
+        color: colorForConstructor(oldC),
+        cost: oldC.price,
+        pts: oldExp.points,
+        delta: oldExp.delta,
+        selected: false
+      });
+
+      const midArrow = document.createElement("div");
+      midArrow.className = "midArrow";
+      midArrow.textContent = "→";
+
+      const rightTile = newC
+        ? makeCompCard({
+            name: newC.name,
+            color: colorForConstructor(newC),
+            cost: newC.price,
+            pts: best.constructorXPts?.[newId] ?? getExpected(expC, newId).points,
+            delta: best.constructorXDelta?.[newId] ?? getExpected(expC, newId).delta,
+            selected: true
+          })
+        : makePlaceholder();
+
+      addComparisonRow(rightList, leftTile, midArrow, rightTile);
+    }
+  }
+
+  leftCol.appendChild(leftTitle);
+  leftCol.appendChild(leftList);
+
+  rightCol.appendChild(rightTitle);
+  rightCol.appendChild(rightList);
+
+  columns.appendChild(leftCol);
+  columns.appendChild(rightCol);
+
+  list.appendChild(columns);
+
+  const wPoints = best.weights?.wPoints ?? 0;
+  const wDelta = best.weights?.wDelta ?? 0;
+
+  totals.textContent =
+    `Cost $${best.cost.toFixed(1)} | xPts ${best.totalXPts.toFixed(1)} | xΔ$ ${best.totalXDelta.toFixed(2)} | wPts ${wPoints.toFixed(2)} | wΔ ${wDelta.toFixed(2)} | Penalised ${best.penalisedScore.toFixed(1)}`;
 }

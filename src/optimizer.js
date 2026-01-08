@@ -1,30 +1,76 @@
+// src/optimizer.js
+import { SEASON, WEIGHTS } from "./config.js";
+
 // Penalty per extra change is intentionally NOT exposed in the UI
 const PENALTY_PER_EXTRA_CHANGE = 10;
 
-// Placeholder expected delta price for display (replace later)
-function expectedDeltaPrice(price) {
-  return 0.2 - 0.01 * price;
+function clamp01(x) {
+  return Math.max(0, Math.min(1, x));
 }
 
-// Converts objects into array format: [id, price, points]
-function toDriverArray(drivers, driverPtsMap) {
-  return drivers.map(d => [d.id, Number(d.price), Number(driverPtsMap[d.id] ?? 0)]);
+function smoothstep(x) {
+  return 3 * x * x - 2 * x * x * x;
 }
 
-function toConstructorArray(constructors, constructorPtsMap) {
-  return constructors.map(c => [c.id, Number(c.price), Number(constructorPtsMap[c.id] ?? 0)]);
+export function valueChangeImportanceNow() {
+  const p = clamp01(SEASON.racesCompleted / SEASON.totalRaces);
+
+  // Windowing
+  const start = WEIGHTS.dropStart;
+  const length = WEIGHTS.dropLength;
+
+  const w = clamp01((p - start) / length);
+
+  // Shape (Excel: BC^1.6)
+  const shaped = Math.pow(w, WEIGHTS.shape);
+
+  // FALLING S-CURVE: 1 → 0
+  const curve01 = 1 - smoothstep(shaped);
+
+  return WEIGHTS.pointsImportanceMax * curve01;
+}
+
+// Extract expected points and expected delta from data.expected.
+// Falls back to 0 for missing entries.
+function getExpectedForId(map, id) {
+  const v = map?.[id];
+  if (!v) return { points: 0, delta: 0 };
+  const pts = Number(v.points ?? 0);
+  const del = Number(v.delta ?? 0);
+  return { points: pts, delta: del };
+}
+
+// Converts objects into array format: [id, price, points, delta]
+function toDriverArray(drivers, expectedDriversMap) {
+  return drivers.map(d => {
+    const exp = getExpectedForId(expectedDriversMap, d.id);
+    return [d.id, Number(d.price), exp.points, exp.delta];
+  });
+}
+
+function toConstructorArray(constructors, expectedConstructorsMap) {
+  return constructors.map(c => {
+    const exp = getExpectedForId(expectedConstructorsMap, c.id);
+    return [c.id, Number(c.price), exp.points, exp.delta];
+  });
 }
 
 export function calculateFantasyTeam(budgetCap, lastTeamIds, data, maxFreeChanges) {
-  const driverPtsMap = data.expectedPoints?.drivers ?? {};
-  const constructorPtsMap = data.expectedPoints?.constructors ?? {};
+  const expectedDriversMap = data.expected?.drivers ?? {};
+  const expectedConstructorsMap = data.expected?.constructors ?? {};
 
   // IMPORTANT: inactive drivers are allowed in lastTeamIds, but ignored for new suggestions
   const activeDrivers = data.drivers.filter(d => d.active);
   const activeConstructors = data.constructors.filter(c => c.active);
 
-  const drivers = toDriverArray(activeDrivers, driverPtsMap);
-  const constructors = toConstructorArray(activeConstructors, constructorPtsMap);
+  // Arrays: [id, price, points, delta]
+  const drivers = toDriverArray(activeDrivers, expectedDriversMap);
+  const constructors = toConstructorArray(activeConstructors, expectedConstructorsMap);
+
+  // Weighting between points and delta
+  const wDelta = valueChangeImportanceNow();
+  const wPoints = 1 - wDelta;
+
 
   let best = null;
 
@@ -54,16 +100,24 @@ export function calculateFantasyTeam(budgetCap, lastTeamIds, data, maxFreeChange
                 cost += constructorCombo[0][1] + constructorCombo[1][1];
                 if (cost > budgetCap) continue;
 
-                // x2 on best driver (captain logic)
+                // Captain logic: x2 ONLY on points, NOT on delta
                 const driverXPts = {};
-                let totalDriverPts = 0;
+                const driverXDelta = {};
+                let totalPoints = 0;
+                let totalDelta = 0;
 
                 for (let p = 0; p < driverCombo.length; p++) {
                   const id = driverCombo[p][0];
                   const pts = driverCombo[p][2];
+                  const del = driverCombo[p][3];
+
                   const xpts = (p === maxIdx) ? pts * 2 : pts;
+
                   driverXPts[id] = xpts;
-                  totalDriverPts += xpts;
+                  driverXDelta[id] = del;
+
+                  totalPoints += xpts;
+                  totalDelta += del;
                 }
 
                 const constructorXPts = {
@@ -71,8 +125,20 @@ export function calculateFantasyTeam(budgetCap, lastTeamIds, data, maxFreeChange
                   [constructorCombo[1][0]]: constructorCombo[1][2]
                 };
 
-                const totalPts = totalDriverPts + constructorCombo[0][2] + constructorCombo[1][2];
-                const roundedPts = Math.round(totalPts * 10) / 10;
+                const constructorXDelta = {
+                  [constructorCombo[0][0]]: constructorCombo[0][3],
+                  [constructorCombo[1][0]]: constructorCombo[1][3]
+                };
+
+                totalPoints += constructorCombo[0][2] + constructorCombo[1][2];
+                totalDelta += constructorCombo[0][3] + constructorCombo[1][3];
+
+                // Combined objective
+                const combined = wPoints * totalPoints + wDelta * totalDelta;
+
+                const roundedPoints = Math.round(totalPoints * 10) / 10;
+                const roundedDelta = Math.round(totalDelta * 100) / 100;
+                const roundedCombined = Math.round(combined * 10) / 10;
 
                 const driverIds = driverCombo.map(d => d[0]);
                 const constructorIds = constructorCombo.map(c => c[0]);
@@ -80,36 +146,38 @@ export function calculateFantasyTeam(budgetCap, lastTeamIds, data, maxFreeChange
                 // lastTeamIds may include inactive picks, but set logic still works with IDs
                 const changesNeeded = new Set([...driverIds, ...constructorIds, ...lastTeamIds]).size - lastTeamIds.length;
                 const additional = Math.max(changesNeeded - maxFreeChanges, 0);
-                const penalised = Math.round((roundedPts - additional * PENALTY_PER_EXTRA_CHANGE) * 10) / 10;
 
-                // Expected delta price for display only
-                const driverXDelta = {};
-                for (const id of driverIds) {
-                  const dObj = data.drivers.find(x => x.id === id);
-                  driverXDelta[id] = expectedDeltaPrice(Number(dObj?.price ?? 0));
-                }
-                const constructorXDelta = {};
-                for (const id of constructorIds) {
-                  const cObj = data.constructors.find(x => x.id === id);
-                  constructorXDelta[id] = expectedDeltaPrice(Number(cObj?.price ?? 0));
-                }
+                // Apply penalties to the combined objective (so changes matter for the real decision)
+                const penalised = Math.round((roundedCombined - additional * PENALTY_PER_EXTRA_CHANGE) * 10) / 10;
 
                 const teamObj = {
                   driverIds,
                   constructorIds,
                   cost,
-                  totalXPts: roundedPts,
-                  penalisedPoints: penalised,
+
+                  // For display
+                  totalXPts: roundedPoints,
+                  totalXDelta: roundedDelta,
+
+                  // For decision-making
+                  combinedScore: roundedCombined,
+                  penalisedScore: penalised,
+
                   changesNeeded,
                   additionalChanges: additional,
+
                   driverXPts,
                   constructorXPts,
                   driverXDelta,
                   constructorXDelta,
-                  penaltyPerExtraChange: PENALTY_PER_EXTRA_CHANGE
+
+                  penaltyPerExtraChange: PENALTY_PER_EXTRA_CHANGE,
+
+                  // Expose current weights for UI/debug
+                  weights: { wPoints, wDelta }
                 };
 
-                if (!best || teamObj.penalisedPoints > best.penalisedPoints) {
+                if (!best || teamObj.penalisedScore > best.penalisedScore) {
                   best = teamObj;
                 }
               }

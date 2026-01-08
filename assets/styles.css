@@ -1,41 +1,66 @@
-/* Fixed dashboard: no page scroll */
+/* =========================
+   Base / Global
+   ========================= */
+
 html, body {
   height: 100%;
 }
+
 body {
   margin: 0;
-  overflow: hidden;
+  overflow: hidden;                /* Fixed dashboard: no page scroll */
   font-family: Arial, sans-serif;
   background: #0b0b0b;
   color: #eee;
 }
 
+/* =========================
+   Layout
+   ========================= */
+
+:root {
+  --slotW: clamp(150px, 16vw, 220px);  /* fixe Breite je Fahrer/Team Karte */
+  --midW:  48px;                       /* fixe Breite Pfeil-Spalte */
+}
+
 .app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .header {
-  padding: 16px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid #222;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  background: #0f0f0f;
 }
-.title { font-weight: 700; font-size: 18px; }
-.hint { color: #999; font-size: 12px; }
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.hint {
+  font-size: 12px;
+  color: #9a9a9a;
+  margin-top: 2px;
+}
 
 .layout {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
+  padding: 16px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr 1fr;
   gap: 12px;
-  padding: 12px;
+
+  grid-template-columns: 1fr 1.5fr;
+  grid-template-rows: auto 1fr 1fr;
+
+  min-height: 0;
 }
 
+/* =========================
+   Cards / Panels
+   ========================= */
 
 .card {
   background: #121212;
@@ -43,12 +68,23 @@ body {
   border-radius: 14px;
   padding: 12px;
   min-height: 0;
-  overflow: hidden;                       /* No internal scroll by default */
+  overflow: hidden;                /* No internal scroll by default */
 }
-
 .left {
   grid-column: 1;
   grid-row: 1 / span 3;
+  overflow: auto;
+  text-align: center;
+  min-height: 0;
+
+  /* hide scrollbar */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+
+.left::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .rightSuggest {
@@ -56,25 +92,36 @@ body {
   grid-row: 1;
 }
 
-.rightTop {
+.rightMain {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 2 / span 2;
+  overflow: auto;
+  text-align: center;
+  min-height: 0;
+
+  /* hide scrollbar */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
 }
 
-.rightBottom {
-  grid-column: 2;
-  grid-row: 3;
+.rightMain::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
-h2 { margin: 0 0 10px 0; font-size: 16px; }
-h3 { margin: 14px 0 8px 0; font-size: 14px; color: #ddd; }
+
+/* =========================
+   Form / Inputs
+   ========================= */
 
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   align-items: end;
+  margin-top: 10px;
 }
+
 .field { display: flex; flex-direction: column; gap: 6px; }
 label { font-size: 12px; color: #bbb; }
 
@@ -84,150 +131,101 @@ input {
   border: 1px solid #333;
   background: #0f0f0f;
   color: #eee;
-  width: 100%;
-  box-sizing: border-box;
+  font-size: 14px;
+  text-align: center;
 }
 
-.primary {
-  grid-column: 1 / span 2;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: #eee;
-  cursor: pointer;
-}
+/* =========================
+   Pickers
+   ========================= */
 
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
-  min-height: 0;
-}
-
-.small {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #8f8f8f;
+  gap: 14px;
+  margin-top: 10px;
 }
 
 .picker {
   display: grid;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
-/* Fixed column layouts */
 .pickerDrivers {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .pickerConstructors {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.teamSplit {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-height: 0;
-}
-
-.teamGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 10px;
-  min-height: 0;
-}
-
-.teamGridDrivers {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.teamGridConstructors {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.summary {
-  margin-top: 10px;
-  color: #bbb;
-  font-size: 13px;
-}
-
-.tile {
-  border-radius: 12px;
-  padding: 10px;
-  background: #0f0f0f;
-  border: 2px solid #2a2a2a;
-  user-select: none;
-}
-
-.tile.sm {
-  border-radius: 10px;
-  padding: 5px 6px;
-  border-width: 2px;
-}
-
-.tile.sm .code {
-  font-size: 12px;
-}
-
-.tile.sm .meta {
-  font-size: 11px;
-  margin-top: 4px;
-}
-
-.tileTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.code {
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.meta {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #bdbdbd;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .badgeBtn {
+  padding: 6px 8px;
   border-radius: 12px;
-  padding: 8px 10px;
+  border: 1px solid #2a2a2a;
   background: #0f0f0f;
-  border: 2px solid #2a2a2a;
   cursor: pointer;
-  font-size: 13px;
   user-select: none;
-}
-
-.badgeBtn .badgeCode {
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.badgeBtn .badgePrice {
-  margin-top: 4px;
-  font-size: 11px;
-  opacity: 0.9;
+  text-align: center;
 }
 
 .badgeBtn.inactive {
-  opacity: 0.4;
-  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.badgeBtn.selected,
-.tile.selected {
-  color: #fff;
+.badgeBtn .badgeCode {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.badgeBtn .badgePrice {
+  font-size: 11px;
+  color: #bdbdbd;
+  margin-top: 2px;
+}
+
+.badgeBtn.selected .badgePrice {
+  color: inherit;
+}
+
+.small {
+  font-size: 12px;
+  color: #9a9a9a;
+  margin-top: 6px;
+}
+
+/* =========================
+   Buttons
+   ========================= */
+
+.rightSuggest .primary {
+  width: 100%;
+  display: block;
+  background: #1f8f4a;
+  border: 2px solid #166f3a;
+  color: #f2f2f2;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.rightSuggest .primary:hover {
+  background: #239e55;
+  border-color: #166f3a;
+  color: #f2f2f2;
+}
+
+/* =========================
+   Changes / Comparison
+   ========================= */
+
+.summary {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #cfcfcf;
+  text-align: center;
 }
 
 .changesList {
@@ -238,360 +236,110 @@ input {
 .changesColumns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-height: 0;
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .changesColTitle {
   font-size: 12px;
-  color: #bdbdbd;
-  margin: 2px 0 8px 2px;
+  color: #9a9a9a;
+  margin-bottom: 8px;
 }
 
 .changesColList {
-  display: grid;
-  gap: 8px;
+  min-height: 0;
 }
 
+/* Row layout: old | middle | new */
 .changeRow {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr var(--midW) 1fr;  /* passt immer in die Spalte */
   gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+
+
+.midCell {
+  width: var(--midW);
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.arrow {
-  color: #cfcfcf;
-  font-weight: 700;
+
+
+.midArrow {
+  font-size: 18px;
+  color: #9a9a9a;
 }
 
-.suggestSection {
-  padding: 12px;
-}
-
-.suggestButton {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
+/* Small comparison card: top name, bottom 3 stats */
+.compCard {
+  border: 1px solid #2b2b2b;
   border-radius: 12px;
-}
-
-.rightSuggest .primary {
-  grid-column: auto;
-  width: 100%;
-  display: block;
-
-  background: #1f8f4a;        /* ruhiges, sattes Grün */
-  border: 2px solid #166f3a;  /* etwas dunkler für Klarheit */
-  color: #f2f2f2;
-
-  font-weight: 600;
-  font-size: 15px;
-  border-radius: 12px;
-  padding: 10px 12px;
-}
-
-.rightSuggest .primary:hover {
-  background: #239e55;        /* minimal heller */
-  border-color: #166f3a;
-  color: #f2f2f2;
-}
-
-/* Fixed dashboard: no page scroll */
-html, body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #0b0b0b;
-  color: #eee;
-}
-
-.app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  padding: 16px 18px;
-  border-bottom: 1px solid #222;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-.title { font-weight: 700; font-size: 18px; }
-.hint { color: #999; font-size: 12px; }
-
-.layout {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr 1fr;
-  gap: 12px;
-  padding: 12px;
-}
-
-
-.card {
-  background: #121212;
-  border: 1px solid #232323;
-  border-radius: 14px;
-  padding: 12px;
-  min-height: 0;
-  overflow: hidden;                       /* No internal scroll by default */
-}
-
-.left {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-}
-
-.rightSuggest {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.rightTop {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.rightBottom {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-h2 { margin: 0 0 10px 0; font-size: 16px; }
-h3 { margin: 14px 0 8px 0; font-size: 14px; color: #ddd; }
-
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  align-items: end;
-}
-.field { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 12px; color: #bbb; }
-
-input {
+  background: #0f0f0f;
   padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  background: #0f0f0f;
-  color: #eee;
-  width: 100%;
-  box-sizing: border-box;
+  min-height: 54px;
 }
 
-.primary {
-  grid-column: 1 / span 2;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: #eee;
-  cursor: pointer;
-}
-
-.split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
-  min-height: 0;
-}
-
-.small {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #8f8f8f;
-}
-
-.picker {
-  display: grid;
-  gap: 8px;
-}
-
-/* Fixed column layouts */
-.pickerDrivers {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.pickerConstructors {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.teamSplit {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-height: 0;
-}
-
-.teamGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 10px;
-  min-height: 0;
-}
-
-.teamGridDrivers {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.teamGridConstructors {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.summary {
-  margin-top: 10px;
-  color: #bbb;
-  font-size: 13px;
-}
-
-.tile {
-  border-radius: 12px;
-  padding: 10px;
-  background: #0f0f0f;
-  border: 2px solid #2a2a2a;
-  user-select: none;
-}
-
-.tile.sm {
-  border-radius: 10px;
-  padding: 5px 6px;
+.compCard.selected {
   border-width: 2px;
 }
 
-.tile.sm .code {
-  font-size: 12px;
-}
-
-.tile.sm .meta {
-  font-size: 11px;
-  margin-top: 4px;
-}
-
-.tileTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.code {
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.meta {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #bdbdbd;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.badgeBtn {
-  border-radius: 12px;
-  padding: 8px 10px;
-  background: #0f0f0f;
-  border: 2px solid #2a2a2a;
-  cursor: pointer;
+.compName {
   font-size: 13px;
-  user-select: none;
-}
-
-.badgeBtn .badgeCode {
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.badgeBtn .badgePrice {
-  margin-top: 4px;
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-.badgeBtn.inactive {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.badgeBtn.selected,
-.tile.selected {
-  color: #fff;
-}
-
-.changesList {
-  margin-top: 10px;
-  min-height: 0;
-}
-
-.changesColumns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-height: 0;
-}
-
-.changesColTitle {
-  font-size: 12px;
-  color: #bdbdbd;
-  margin: 2px 0 8px 2px;
-}
-
-.changesColList {
-  display: grid;
-  gap: 8px;
-}
-
-.changeRow {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 10px;
-  align-items: center;
-}
-
-.arrow {
-  color: #cfcfcf;
-  font-weight: 700;
-}
-
-.suggestSection {
-  padding: 12px;
-}
-
-.suggestButton {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 12px;
-}
-
-.rightSuggest .primary {
-  grid-column: auto;
-  width: 100%;
-  display: block;
-
-  background: #1f8f4a;        /* ruhiges, sattes Grün */
-  border: 2px solid #166f3a;  /* etwas dunkler für Klarheit */
-  color: #f2f2f2;
-
   font-weight: 600;
-  font-size: 15px;
-  border-radius: 12px;
-  padding: 10px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
 }
 
-.rightSuggest .primary:hover {
-  background: #239e55;        /* minimal heller */
-  border-color: #166f3a;
-  color: #f2f2f2;
+.compBottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  font-size: 12px;
+  color: #cfcfcf;
 }
+
+.compBottom .stat {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 6px;
+}
+
+.compBottom .stat strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #9b9b9b;
+  margin-bottom: 2px;
+}
+
+.compPlaceholder {
+  border: 1px dashed #2b2b2b;
+  border-radius: 12px;
+  background: transparent;
+  min-height: 54px;
+}
+
+.compCard,
+.compPlaceholder {
+  width: var(--slotW);
+  box-sizing: border-box;
+}
+
+:root {
+  --slotW: clamp(140px, 15vw, 220px); /* max card width */
+  --midW:  44px;                      /* arrow width */
+}
+
+.compCard,
+.compPlaceholder {
+  width: 100%;               /* nimmt die verfügbare Spaltenbreite */
+  max-width: var(--slotW);   /* aber wird nie größer als slotW */
+  box-sizing: border-box;
+}
+

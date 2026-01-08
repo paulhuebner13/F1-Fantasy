@@ -10,14 +10,14 @@
 <body>
   <div class="app">
     <header class="header">
-      <div class="title">F1 Fantasy Tool</div>
-      <div class="hint">No scroll. Fixed dashboard layout.</div>
+      <div class="title">F1 Fantasy Optimizer by Paul Hübner</div>
     </header>
 
     <main class="layout">
-      <!-- LEFT: Inputs + current team selection -->
+
+      <!-- LEFT: Current team -->
       <section class="card left">
-        <h2>Current Team</h2>
+        <h2>Current team</h2>
 
         <div class="form">
           <div class="field">
@@ -29,7 +29,6 @@
             <label for="freeChangesInput">Free changes this week</label>
             <input id="freeChangesInput" type="number" value="2" step="1" min="0" />
           </div>
-
         </div>
 
         <div class="split">
@@ -45,44 +44,21 @@
             <div class="small">Pick exactly 2 constructors.</div>
           </div>
         </div>
-
-        <div class="teamSplit">
-          <div>
-            <div id="selectedDriversGrid" class="teamGrid teamGridDrivers"></div>
-          </div>
-          <div>
-            <div id="selectedConstructorsGrid" class="teamGrid teamGridConstructors"></div>
-          </div>
-        </div>
       </section>
 
-
+      <!-- RIGHT TOP: Suggest -->
       <section class="card rightSuggest">
         <button id="btnSuggest" class="primary">Suggest best team</button>
       </section>
 
-
-      <!-- RIGHT TOP: Changes -->
-      <section class="card rightTop">
-        
-        <h2>Changes</h2>
-        <div id="changesHeader" class="summary">No suggestion yet.</div>
+      <!-- RIGHT: Comparison (changes + new team) -->
+      <section class="card rightMain">
+        <div id="bestTeamTotals" class="summary"></div>
         <div id="changesList" class="changesList"></div>
       </section>
 
-      <!-- RIGHT BOTTOM: New team -->
-      <section class="card rightBottom">
-        <h2>New Team</h2>
-        <div class="teamSplit">
-          <div>
-            <div id="bestDriversGrid" class="teamGrid teamGridDrivers"></div>
-          </div>
-          <div>
-            <div id="bestConstructorsGrid" class="teamGrid teamGridConstructors"></div>
-          </div>
-        </div>
-        <div id="bestTeamTotals" class="summary"></div>
-      </section>
+
+
     </main>
   </div>
 
