@@ -1,138 +1,138 @@
 {
-  "drivers": {
-    "GAS": {
-      "points": -2.3,
-      "delta": 0.135
-    },
-    "COL": {
-      "points": -5.6,
-      "delta": 0.155
-    },
-    "ALO": {
-      "points": 2.0,
-      "delta": 0.153
-    },
-    "STR": {
-      "points": -0.7,
-      "delta": 0.133
-    },
-    "BOR": {
-      "points": 2.5,
-      "delta": 0.145
-    },
-    "HUL": {
-      "points": 1.6,
-      "delta": 0.15
-    },
-    "PER": {
-      "points": 0.0,
-      "delta": 0.13
-    },
-    "BOT": {
-      "points": 0.0,
-      "delta": 0.135
-    },
-    "LEC": {
-      "points": 17.6,
-      "delta": -0.03
-    },
-    "HAM": {
-      "points": -1000.0,
-      "delta": 1040.0
-    },
-    "OCO": {
-      "points": 6.9,
-      "delta": 0.121
-    },
-    "BEA": {
-      "points": 8.2,
-      "delta": 0.107
-    },
-    "NOR": {
-      "points": 38.0,
-      "delta": -0.103
-    },
-    "PIA": {
-      "points": 38.9,
-      "delta": -0.051
-    },
-    "ANT": {
-      "points": 19.2,
-      "delta": 0.019
-    },
-    "RUS": {
-      "points": 28.2,
-      "delta": -0.037
-    },
-    "LAW": {
-      "points": -5.1,
-      "delta": 0.141
-    },
-    "LIN": {
-      "points": 1.5,
-      "delta": 0.152
-    },
-    "HAD": {
-      "points": 2.0,
-      "delta": 0.131
-    },
-    "VER": {
-      "points": 39.1,
-      "delta": -0.101
-    },
-    "ALB": {
-      "points": -50.8,
-      "delta": 100.074
-    },
-    "SAI": {
-      "points": 5.7,
-      "delta": 0.123
-    }
-  },
-  "constructors": {
-    "ALP": {
-      "points": -5.9,
-      "delta": 0.099
-    },
-    "AMR": {
-      "points": 2.5,
-      "delta": 0.097
-    },
-    "AUD": {
-      "points": 8.7,
-      "delta": 0.113
-    },
-    "CAD": {
-      "points": 0.0,
-      "delta": 0.038
-    },
-    "FER": {
-      "points": 56.6,
-      "delta": -0.118
-    },
-    "HAA": {
-      "points": 22.0,
-      "delta": 0.044
-    },
-    "MCL": {
-      "points": 91.2,
-      "delta": -0.161
-    },
-    "MER": {
-      "points": 57.3,
-      "delta": -0.084
-    },
-    "RBR": {
-      "points": 55.9,
-      "delta": -0.111
-    },
-    "RB": {
-      "points": 4.1,
-      "delta": 0.038
-    },
-    "WIL": {
-      "points": 18.3,
-      "delta": 0.005
-    }
-  }
+"drivers": {
+"GAS": {
+"points": 2.8,
+"delta": 0.000
+},
+"COL": {
+"points": 6.4,
+"delta": 0.000
+},
+"ALO": {
+"points": -29.0,
+"delta": 0.000
+},
+"STR": {
+"points": -27.6,
+"delta": 0.000
+},
+"BOR": {
+"points": 13.5,
+"delta": 0.000
+},
+"HUL": {
+"points": -16.1,
+"delta": 0.000
+},
+"PER": {
+"points": -9.3,
+"delta": 0.000
+},
+"BOT": {
+"points": -16.6,
+"delta": 0.000
+},
+"LEC": {
+"points": 28.1,
+"delta": 0.000
+},
+"HAM": {
+"points": 19.3,
+"delta": 0.000
+},
+"OCO": {
+"points": 9.5,
+"delta": 0.000
+},
+"BEA": {
+"points": 15.9,
+"delta": 0.000
+},
+"NOR": {
+"points": 8.6,
+"delta": 0.000
+},
+"PIA": {
+"points": 1.0,
+"delta": 0.000
+},
+"ANT": {
+"points": 33.2,
+"delta": 0.000
+},
+"RUS": {
+"points": 38.1,
+"delta": 0.000
+},
+"LAW": {
+"points": 1.1,
+"delta": 0.000
+},
+"LIN": {
+"points": 15.6,
+"delta": 0.000
+},
+"HAD": {
+"points": -5.3,
+"delta": 0.000
+},
+"VER": {
+"points": 30.1,
+"delta": 0.000
+},
+"ALB": {
+"points": -6.9,
+"delta": 0.000
+},
+"SAI": {
+"points": -7.4,
+"delta": 0.000
+}
+},
+"constructors": {
+"ALP": {
+"points": 2.0,
+"delta": 0.000
+},
+"AMR": {
+"points": -59.2,
+"delta": 0.000
+},
+"AUD": {
+"points": -1.7,
+"delta": 0.000
+},
+"CAD": {
+"points": -28.0,
+"delta": 0.000
+},
+"FER": {
+"points": 67.7,
+"delta": 0.000
+},
+"HAA": {
+"points": 36.3,
+"delta": 0.000
+},
+"MCL": {
+"points": 24.0,
+"delta": 0.000
+},
+"MER": {
+"points": 84.7,
+"delta": 0.000
+},
+"RBR": {
+"points": 44.7,
+"delta": 0.000
+},
+"RB": {
+"points": 31.1,
+"delta": 0.000
+},
+"WIL": {
+"points": -7.3,
+"delta": 0.000
+}
+}
 }
