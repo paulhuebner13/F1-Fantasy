@@ -30,5 +30,5 @@
 { "id": "VER", "name": "Max Verstappen", "teamId": "RBR", "price": 28, "active": true },
 
 { "id": "ALB", "name": "Alexander Albon", "teamId": "WIL", "price": 11, "active": true },
-{ "id": "SAI", "name": "Carlos Sainz Jr.", "teamId": "WIL", "price": 11, "active": true },
+{ "id": "SAI", "name": "Carlos Sainz Jr.", "teamId": "WIL", "price": 11, "active": true }
 ]
