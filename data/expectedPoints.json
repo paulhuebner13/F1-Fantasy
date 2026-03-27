@@ -1,27 +1,27 @@
 {
 "drivers": {
 "GAS": {
-"points": 1.6,
+"points": 3.2,
 "delta": 0.000
 },
 "COL": {
-"points": -1.7,
+"points": -2.4,
 "delta": 0.000
 },
 "ALO": {
-"points": -41.7,
+"points": -29.3,
 "delta": 0.000
 },
 "STR": {
-"points": -33.1,
+"points": -27.3,
 "delta": 0.000
 },
 "BOR": {
-"points": 8.0,
+"points": 8.6,
 "delta": 0.000
 },
 "HUL": {
-"points": -17.6,
+"points": -16.3,
 "delta": 0.000
 },
 "PER": {
@@ -33,59 +33,59 @@
 "delta": 0.000
 },
 "LEC": {
-"points": 40.5,
+"points": 26.3,
 "delta": 0.000
 },
 "HAM": {
-"points": 29.6,
+"points": 16.1,
 "delta": 0.000
 },
 "OCO": {
-"points": 9.9,
+"points": 11.6,
 "delta": 0.000
 },
 "BEA": {
-"points": 18.1,
+"points": 20.3,
 "delta": 0.000
 },
 "NOR": {
-"points": 13.5,
+"points": 13.6,
 "delta": 0.000
 },
 "PIA": {
-"points": 6.6,
+"points": 8.0,
 "delta": 0.000
 },
 "ANT": {
-"points": 43.2,
+"points": 37.7,
 "delta": 0.000
 },
 "RUS": {
-"points": 48.5,
+"points": 39.3,
 "delta": 0.000
 },
 "LAW": {
-"points": -3.0,
+"points": 0.2,
 "delta": 0.000
 },
 "LIN": {
-"points": 12.5,
+"points": 11.6,
 "delta": 0.000
 },
 "HAD": {
-"points": -2.3,
+"points": -8.0,
 "delta": 0.000
 },
 "VER": {
-"points": 31.3,
+"points": 21.3,
 "delta": 0.000
 },
 "ALB": {
-"points": 0.9,
+"points": -6.4,
 "delta": 0.000
 },
 "SAI": {
-"points": -7.6,
+"points": -6.9,
 "delta": 0.000
 }
 },
@@ -95,11 +95,11 @@
 "delta": 0.000
 },
 "AMR": {
-"points": -48.0,
+"points": -30.6,
 "delta": 0.000
 },
 "AUD": {
-"points": -3.1,
+"points": -2.4,
 "delta": 0.000
 },
 "CAD": {
@@ -107,31 +107,31 @@
 "delta": 0.000
 },
 "FER": {
-"points": 82.7,
+"points": 56.1,
 "delta": 0.000
 },
 "HAA": {
-"points": 20.6,
+"points": 26.0,
 "delta": 0.000
 },
 "MCL": {
-"points": 46.3,
+"points": 48.5,
 "delta": 0.000
 },
 "MER": {
-"points": 93.2,
+"points": 79.5,
 "delta": 0.000
 },
 "RBR": {
-"points": 53.3,
+"points": 38.1,
 "delta": 0.000
 },
 "RB": {
-"points": 15.3,
+"points": 17.8,
 "delta": 0.000
 },
 "WIL": {
-"points": 4.4,
+"points": 1.1,
 "delta": 0.000
 }
 }
